@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "947369915121",
+    "project_id": "lenslink-13d8c",
+    "storage_bucket": "lenslink-13d8c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947369915121:android:eacf13a6170ebb44f46f50",
+        "android_client_info": {
+          "package_name": "com.example.lenslink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQ1Jv2Q5k-D7QctjydXEn6wSaXAjnNCd0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
