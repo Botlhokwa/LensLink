@@ -49,7 +49,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         tilEmail = findViewById(R.id.tilEmail);
         etEmail = findViewById(R.id.etEmail);
         btnSendReset = findViewById(R.id.btnSendReset);
-        progressIndicator = findViewById(R.id.progressIndicator);
         tvFormError = findViewById(R.id.tvFormError);
         tvStatus = findViewById(R.id.tvStatus);
 
@@ -69,7 +68,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         clearErrorOnEdit(etEmail, tilEmail);
 
         // Back to Login: Login is still underneath in the back stack.
-        findViewById(R.id.tvBackToLogin).setOnClickListener(v -> finish());
+        findViewById(R.id.btnBackToLogin).setOnClickListener(v -> finish());
 
         renderState();
     }
@@ -109,10 +108,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private void renderState() {
         tilEmail.setEnabled(!isSubmitting);
-        btnSendReset.setEnabled(!isSubmitting);
         btnSendReset.setText(isSubmitting
                 ? R.string.button_sending : R.string.button_send_reset_link);
-        progressIndicator.setVisibility(isSubmitting ? View.VISIBLE : View.INVISIBLE);
+        UiUtils.setButtonLoading(btnSendReset, isSubmitting);
     }
 
     private void clearMessages() {

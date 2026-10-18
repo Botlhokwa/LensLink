@@ -67,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        progressIndicator = findViewById(R.id.progressIndicator);
         tvFormError = findViewById(R.id.tvFormError);
     }
 
@@ -148,9 +147,8 @@ public class LoginActivity extends AppCompatActivity {
         tilEmail.setEnabled(editable);
         tilPassword.setEnabled(editable);
 
-        btnLogin.setEnabled(!isSubmitting);
         btnLogin.setText(isSubmitting ? R.string.button_logging_in : R.string.button_log_in);
-        progressIndicator.setVisibility(isSubmitting ? View.VISIBLE : View.INVISIBLE);
+        UiUtils.setButtonLoading(btnLogin, isSubmitting);
     }
 
     private void showFormError(String message) {

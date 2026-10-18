@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Base for the LensLink.Text.* styles. Empty parent = no inheritance. -->
     <style name="LensLink.Text" parent="" />
 
     <style name="LensLink.Text.Label">
@@ -71,5 +69,54 @@
     <style name="LensLink.Text.Info">
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/lenslink_charcoal</item>
+    </style>
+
+    <style name="LensLink.Text.Title">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/lenslink_charcoal</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="LensLink.Text.Subtitle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/lenslink_text_secondary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="LensLink.Text.Note">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/lenslink_text_secondary</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!-- Soft outlined button with a light border (Back to Log In, Log Out) -->
+    <style name="LensLink.Button.SecondarySoft" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/lenslink_charcoal</item>
+        <item name="strokeColor">@color/lenslink_grey</item>
+        <item name="iconTint">@color/lenslink_charcoal</item>
+        <item name="cornerRadius">@dimen/lenslink_button_corner_radius</item>
+        <item name="android:minHeight">@dimen/lenslink_button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="LensLink.Progress.Button" parent="Widget.MaterialComponents.CircularProgressIndicator">
+        <item name="indicatorSize">20dp</item>
+        <item name="trackThickness">2dp</item>
+        <item name="indicatorInset">0dp</item>
+        <item name="indicatorColor">@color/lenslink_white</item>
+        <item name="trackColor">@android:color/transparent</item>
+    </style>
+
+    <style name="LensLink.Progress.Screen" parent="Widget.MaterialComponents.CircularProgressIndicator">
+        <item name="indicatorSize">32dp</item>
+        <item name="trackThickness">3dp</item>
+        <item name="indicatorColor">@color/lenslink_charcoal</item>
+        <item name="trackColor">@color/lenslink_champagne</item>
     </style>
 </resources>

@@ -16,15 +16,11 @@
         android:paddingVertical="48dp">
 
         <!-- Text wordmark until the team supplies the approved logo asset -->
-        <TextView
+        <include
+            layout="@layout/view_auth_logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:fontFamily="serif"
-            android:gravity="center"
-            android:text="@string/app_name"
-            android:textColor="@color/lenslink_charcoal"
-            android:textSize="32sp" />
+            android:layout_marginBottom="32dp" />
 
         <include
             layout="@layout/view_auth_toggle"
@@ -122,16 +118,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/button_log_in" />
-
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progressIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            app:indicatorColor="@color/lenslink_charcoal"
-            app:trackColor="@color/lenslink_grey" />
 
         <!-- Footer link -->
         <LinearLayout

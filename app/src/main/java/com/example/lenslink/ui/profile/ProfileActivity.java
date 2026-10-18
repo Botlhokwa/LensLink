@@ -83,7 +83,6 @@ public class ProfileActivity extends AppCompatActivity {
         btnPrimary = findViewById(R.id.btnPrimary);
         btnCancel = findViewById(R.id.btnCancel);
         btnLogout = findViewById(R.id.btnLogout);
-        progressIndicator = findViewById(R.id.progressIndicator);
         tvFormError = findViewById(R.id.tvFormError);
     }
 
@@ -208,6 +207,10 @@ public class ProfileActivity extends AppCompatActivity {
         AppNavigator.goToLogin(this); // fresh back stack
     }
 
+    public ProfileActivity() {
+        super();
+    }
+
     // UI helpers
     private void renderState() {
         boolean editing = mode == Mode.EDITING;
@@ -219,13 +222,14 @@ public class ProfileActivity extends AppCompatActivity {
         tilEmail.setEnabled(false);
         tilRole.setEnabled(false);
 
-        progressIndicator.setVisibility(busy ? View.VISIBLE : View.INVISIBLE);
         btnCancel.setVisibility(editing || mode == Mode.SAVING ? View.VISIBLE : View.GONE);
         btnCancel.setEnabled(editing);
         btnLogout.setEnabled(mode != Mode.SAVING);
-        btnPrimary.setEnabled(!busy);
 
         switch (mode) {
+            case LOADING:
+                btnPrimary.setText(R.string.button_loading);
+                break;
             case EDITING:
                 btnPrimary.setText(R.string.button_save_changes);
                 break;
@@ -239,6 +243,7 @@ public class ProfileActivity extends AppCompatActivity {
                 btnPrimary.setText(R.string.button_edit_profile);
                 break;
         }
+        UiUtils.setButtonLoading(btnPrimary, busy);
     }
 
     private void bindUser(User user) {

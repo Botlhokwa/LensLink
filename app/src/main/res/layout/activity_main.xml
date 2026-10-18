@@ -10,22 +10,18 @@
     android:paddingHorizontal="@dimen/lenslink_screen_padding">
 
     <!-- Text wordmark until the team supplies the approved logo asset -->
-    <TextView
+    <include
+        layout="@layout/view_auth_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressIndicator"
+        style="@style/LensLink.Progress.Screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="serif"
-        android:text="@string/app_name"
-        android:textColor="@color/lenslink_charcoal"
-        android:textSize="32sp" />
-
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progressIndicator"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:indeterminate="true"
-        app:indicatorColor="@color/lenslink_charcoal"
-        app:trackColor="@color/lenslink_grey" />
+        android:layout_marginTop="32dp"
+        android:indeterminate="true" />
 
     <TextView
         android:id="@+id/tvMessage"

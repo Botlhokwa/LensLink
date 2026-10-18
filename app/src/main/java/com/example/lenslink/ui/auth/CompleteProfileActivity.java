@@ -86,7 +86,6 @@ public class CompleteProfileActivity extends AppCompatActivity {
         btnRolePhotographer = findViewById(R.id.btnRolePhotographer);
         btnComplete = findViewById(R.id.btnComplete);
         btnLogout = findViewById(R.id.btnLogout);
-        progressIndicator = findViewById(R.id.progressIndicator);
         tvFormError = findViewById(R.id.tvFormError);
     }
 
@@ -149,10 +148,8 @@ public class CompleteProfileActivity extends AppCompatActivity {
         btnRoleClient.setEnabled(editable);
         btnRolePhotographer.setEnabled(editable);
         btnLogout.setEnabled(editable);
-
-        btnComplete.setEnabled(editable);
         btnComplete.setText(isSubmitting ? R.string.button_saving : R.string.button_complete_profile);
-        progressIndicator.setVisibility(isSubmitting ? View.VISIBLE : View.INVISIBLE);
+        UiUtils.setButtonLoading(btnComplete, isSubmitting);
     }
 
     private void showFormError(String message) {

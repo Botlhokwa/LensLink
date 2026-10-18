@@ -11,12 +11,12 @@ import com.example.lenslink.navigation.AppNavigator;
 import com.example.lenslink.repository.AuthRepository;
 import com.example.lenslink.util.UiUtils;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 public class MainActivity extends AppCompatActivity {
 
     private AuthRepository authRepository;
-    private LinearProgressIndicator progressIndicator;
+    private CircularProgressIndicator progressIndicator;
     private TextView tvMessage;
     private MaterialButton btnRetry;
 

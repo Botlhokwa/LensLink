@@ -15,32 +15,25 @@
         android:paddingHorizontal="@dimen/lenslink_screen_padding"
         android:paddingVertical="32dp">
 
-        <TextView
+        <include
+            layout="@layout/view_auth_logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:fontFamily="serif"
-            android:gravity="center"
-            android:text="@string/app_name"
-            android:textColor="@color/lenslink_charcoal"
-            android:textSize="32sp" />
+            android:layout_marginBottom="32dp" />
 
         <TextView
+            style="@style/LensLink.Text.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="serif"
-            android:text="@string/complete_title"
-            android:textColor="@color/lenslink_charcoal"
-            android:textSize="24sp" />
+            android:text="@string/complete_title" />
 
         <TextView
+            style="@style/LensLink.Text.Subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="24dp"
-            android:text="@string/complete_instructions"
-            android:textColor="@color/lenslink_text_secondary"
-            android:textSize="14sp" />
+            android:layout_marginBottom="28dp"
+            android:text="@string/complete_instructions" />
 
         <!-- Full name -->
         <TextView
@@ -173,19 +166,9 @@
             android:layout_height="wrap_content"
             android:text="@string/button_complete_profile" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progressIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            app:indicatorColor="@color/lenslink_charcoal"
-            app:trackColor="@color/lenslink_grey" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogout"
-            style="@style/LensLink.Button.Secondary"
+            style="@style/LensLink.Button.SecondarySoft"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

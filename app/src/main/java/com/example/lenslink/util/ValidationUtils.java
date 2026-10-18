@@ -15,6 +15,10 @@ public final class ValidationUtils {
     private static final int MIN_NAME_LENGTH = 2;
     private static final int MIN_PASSWORD_LENGTH = 8;
 
+    private static final int MAX_NAME_LENGTH = 60;
+
+    private static final int MAX_PHONE_LENGTH = 20;
+
     // Optional leading +, then 9 to 15 digits (spaces/dashes are stripped first).
     private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?[0-9]{9,15}$");
 
@@ -25,6 +29,7 @@ public final class ValidationUtils {
     public static int validateFullName(String fullName) {
         if (isBlank(fullName)) return R.string.error_name_required;
         if (fullName.trim().length() < MIN_NAME_LENGTH) return R.string.error_name_too_short;
+        if (fullName.trim().length() > MAX_NAME_LENGTH) return R.string.error_name_too_long;
         return VALID;
     }
 
@@ -40,6 +45,7 @@ public final class ValidationUtils {
     @StringRes
     public static int validatePhone(String phone) {
         if (isBlank(phone)) return VALID;
+        if (phone.trim().length() > MAX_PHONE_LENGTH) return R.string.error_phone_invalid;
         String digitsOnly = phone.trim().replaceAll("[\\s-]", "");
         if (!PHONE_PATTERN.matcher(digitsOnly).matches()) return R.string.error_phone_invalid;
         return VALID;

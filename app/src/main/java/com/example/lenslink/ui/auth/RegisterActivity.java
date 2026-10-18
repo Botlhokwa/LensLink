@@ -80,7 +80,6 @@ public class RegisterActivity extends AppCompatActivity {
         btnRoleClient = findViewById(R.id.btnRoleClient);
         btnRolePhotographer = findViewById(R.id.btnRolePhotographer);
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
-        progressIndicator = findViewById(R.id.progressIndicator);
         tvFormError = findViewById(R.id.tvFormError);
     }
 
@@ -219,8 +218,6 @@ public class RegisterActivity extends AppCompatActivity {
         btnRoleClient.setEnabled(formEditable);
         btnRolePhotographer.setEnabled(formEditable);
 
-        btnCreateAccount.setEnabled(!isSubmitting);
-        progressIndicator.setVisibility(isSubmitting ? View.VISIBLE : View.INVISIBLE);
 
         if (isSubmitting) {
             btnCreateAccount.setText(R.string.button_creating_account);
@@ -229,6 +226,8 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             btnCreateAccount.setText(R.string.button_create_account);
         }
+
+        UiUtils.setButtonLoading(btnCreateAccount, isSubmitting);
     }
 
 

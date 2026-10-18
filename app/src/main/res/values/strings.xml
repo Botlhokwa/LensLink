@@ -26,7 +26,7 @@
     <string name="action_log_in">Log In</string>
     <string name="msg_account_created">Account created. Welcome to LensLink.</string>
     <string name="error_profile_save_failed">Your account was created, but your profile could not be saved. Check your connection and tap Retry.</string>
-
+    <string name="error_name_too_long">Name must be 60 characters or fewer</string>
     <!-- Validation errors -->
     <string name="error_name_required">Please enter your full name</string>
     <string name="error_name_too_short">Name must be at least 2 characters</string>
@@ -43,6 +43,7 @@
     <string name="hint_login_password">Enter your password</string>
     <string name="button_log_in">Log In</string>
     <string name="button_logging_in">Logging in…</string>
+    <string name="button_loading">Loading…</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="no_account">Don\'t have an account?</string>
     <string name="action_sign_up">Sign Up</string>
@@ -55,8 +56,9 @@
     <string name="temp_home_signed_in_as">Signed in as %1$s\nRole: %2$s</string>
 
     <!-- Forgot password -->
-    <string name="forgot_title">Reset your password</string>
+    <string name="forgot_title">Forgot Password?</string>
     <string name="forgot_instructions">Enter the email address linked to your account and we\'ll send you a link to reset your password.</string>
+    <string name="forgot_reassurance">Your password won\'t change until you open the link and create a new one.</string>
     <string name="button_send_reset_link">Send Reset Link</string>
     <string name="button_sending">Sending…</string>
     <string name="msg_reset_link_sent">If an account exists for that email, a password reset link is on its way. Please check your inbox and spam folder.</string>

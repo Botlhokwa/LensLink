@@ -25,16 +25,6 @@
             android:textColor="@color/lenslink_charcoal"
             android:textSize="18sp" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progressIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            app:indicatorColor="@color/lenslink_charcoal"
-            app:trackColor="@color/lenslink_grey" />
-
         <!-- Full name (editable) -->
         <TextView
             style="@style/LensLink.Text.Label"

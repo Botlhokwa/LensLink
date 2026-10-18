@@ -18,6 +18,13 @@ import com.google.android.material.textfield.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 
+import android.content.Context;
+
+import com.example.lenslink.R;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec;
+import com.google.android.material.progressindicator.IndeterminateDrawable;
+
 public final class UiUtils {
 
     private UiUtils() {
@@ -75,5 +82,25 @@ public final class UiUtils {
 
     public static String rawTextOf(TextInputEditText editText) {
         return editText.getText() == null ? "" : editText.getText().toString();
+    }
+
+    public static void setButtonLoading(MaterialButton button, boolean loading) {
+        button.setClickable(!loading);
+
+        if (!loading) {
+            button.setIcon(null);
+            return;
+        }
+
+        Context context = button.getContext();
+        CircularProgressIndicatorSpec spec = new CircularProgressIndicatorSpec(
+                context, null, 0, R.style.LensLink_Progress_Button);
+        IndeterminateDrawable<CircularProgressIndicatorSpec> spinner =
+                IndeterminateDrawable.createCircularDrawable(context, spec);
+
+        button.setIconGravity(MaterialButton.ICON_GRAVITY_TEXT_START);
+        button.setIconPadding(context.getResources()
+                .getDimensionPixelSize(R.dimen.lenslink_button_icon_padding));
+        button.setIcon(spinner);
     }
 }
