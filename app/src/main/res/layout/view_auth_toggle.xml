@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_auth_toggle_container"
+    android:orientation="horizontal"
+    android:padding="4dp"
+    android:weightSum="2">
+
+    <TextView
+        android:id="@+id/toggleLogin"
+        style="@style/LensLink.Text.Toggle"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_auth_toggle_segment"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/auth_toggle_login" />
+
+    <TextView
+        android:id="@+id/toggleSignUp"
+        style="@style/LensLink.Text.Toggle"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_auth_toggle_segment"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/auth_toggle_sign_up" />
+</LinearLayout>

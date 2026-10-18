@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LensLink.Text" parent="" />
+
+    <style name="LensLink.Text.Label">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/lenslink_charcoal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <style name="LensLink.Text.Error">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/lenslink_error</item>
+    </style>
+
+    <style name="LensLink.Text.Toggle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/selector_segment_text</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="LensLink.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/lenslink_white</item>
+        <item name="boxStrokeColor">@color/selector_input_stroke</item>
+        <item name="boxStrokeErrorColor">@color/lenslink_error</item>
+        <item name="boxCornerRadiusTopStart">@dimen/lenslink_field_corner_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/lenslink_field_corner_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/lenslink_field_corner_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/lenslink_field_corner_radius</item>
+        <item name="hintEnabled">false</item>
+        <item name="errorTextColor">@color/lenslink_error</item>
+        <item name="errorIconDrawable">@null</item>
+        <item name="endIconTint">@color/lenslink_charcoal</item>
+        <item name="helperTextTextColor">@color/lenslink_text_secondary</item>
+    </style>
+
+    <style name="LensLink.TextInputEditText" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox">
+        <item name="android:textColor">@color/lenslink_charcoal</item>
+        <item name="android:textColorHint">@color/lenslink_text_secondary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="LensLink.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/selector_button_bg</item>
+        <item name="android:textColor">@color/selector_button_text</item>
+        <item name="cornerRadius">@dimen/lenslink_button_corner_radius</item>
+        <item name="android:minHeight">@dimen/lenslink_button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="LensLink.Button.Segment" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="backgroundTint">@color/selector_segment_bg</item>
+        <item name="android:textColor">@color/selector_segment_text</item>
+        <item name="strokeColor">@color/lenslink_grey</item>
+        <item name="cornerRadius">@dimen/lenslink_field_corner_radius</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="LensLink.Text.Info">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/lenslink_charcoal</item>
+    </style>
+
+    <style name="LensLink.Text.Title">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/lenslink_charcoal</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="LensLink.Text.Subtitle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/lenslink_text_secondary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="LensLink.Text.Note">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/lenslink_text_secondary</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!-- Soft outlined button with a light border (Back to Log In, Log Out) -->
+    <style name="LensLink.Button.SecondarySoft" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/lenslink_charcoal</item>
+        <item name="strokeColor">@color/lenslink_grey</item>
+        <item name="iconTint">@color/lenslink_charcoal</item>
+        <item name="cornerRadius">@dimen/lenslink_button_corner_radius</item>
+        <item name="android:minHeight">@dimen/lenslink_button_height</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="LensLink.Progress.Button" parent="Widget.MaterialComponents.CircularProgressIndicator">
+        <item name="indicatorSize">20dp</item>
+        <item name="trackThickness">2dp</item>
+        <item name="indicatorInset">0dp</item>
+        <item name="indicatorColor">@color/lenslink_white</item>
+        <item name="trackColor">@android:color/transparent</item>
+    </style>
+
+    <style name="LensLink.Progress.Screen" parent="Widget.MaterialComponents.CircularProgressIndicator">
+        <item name="indicatorSize">32dp</item>
+        <item name="trackThickness">3dp</item>
+        <item name="indicatorColor">@color/lenslink_charcoal</item>
+        <item name="trackColor">@color/lenslink_champagne</item>
+    </style>
+</resources>

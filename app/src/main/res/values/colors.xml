@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="lenslink_charcoal">#252525</color>
+    <color name="lenslink_cream">#F0E6DD</color>
+    <color name="lenslink_grey">#D8D8D8</color>
+    <color name="lenslink_champagne">#ECDCCF</color>
+    <color name="lenslink_white">#FFFFFF</color>
+    <color name="lenslink_text_secondary">#5E5E5E</color>
+    <color name="lenslink_error">#B3261E</color>
 </resources>
