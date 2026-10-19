@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="lenslink_ink">#241F1D</color>
+    <color name="lenslink_cream">#F5EEE7</color>
+    <color name="lenslink_card">#FFFCF8</color>
+    <color name="lenslink_text">#342D29</color>
+    <color name="lenslink_muted">#81756D</color>
+    <color name="lenslink_border">#E8DDD2</color>
+    <color name="lenslink_soft">#EDE4DC</color>
+    <color name="lenslink_accent">#B3916E</color>
 </resources>

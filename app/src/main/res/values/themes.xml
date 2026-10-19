@@ -1,8 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.LensLink" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.LensLink" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/lenslink_ink</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/lenslink_accent</item>
+        <item name="colorOnSecondary">@color/lenslink_ink</item>
+        <item name="colorSurface">@color/lenslink_card</item>
+        <item name="colorOnSurface">@color/lenslink_text</item>
+        <item name="android:colorBackground">@color/lenslink_cream</item>
     </style>
 
     <style name="Theme.LensLink" parent="Base.Theme.LensLink" />
