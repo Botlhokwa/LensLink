@@ -25,7 +25,6 @@ import com.example.lenslink.util.UiUtils;
 import com.example.lenslink.util.ValidationUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.example.lenslink.navigation.AppNavigator;
@@ -38,7 +37,6 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputEditText etFullName, etEmail, etPhone, etPassword, etConfirmPassword;
     private MaterialButtonToggleGroup roleToggleGroup;
     private MaterialButton btnRoleClient, btnRolePhotographer, btnCreateAccount;
-    private LinearProgressIndicator progressIndicator;
     private TextView tvFormError;
 
     private boolean isSubmitting = false;
