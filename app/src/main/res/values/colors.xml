@@ -10,4 +10,10 @@
     <color name="lenslink_border">#E8DDD2</color>
     <color name="lenslink_soft">#EDE4DC</color>
     <color name="lenslink_accent">#B3916E</color>
+    <color name="lenslink_charcoal">#252525</color>
+    <color name="lenslink_grey">#D8D8D8</color>
+    <color name="lenslink_champagne">#ECDCCF</color>
+    <color name="lenslink_white">#FFFFFF</color>
+    <color name="lenslink_text_secondary">#5E5E5E</color>
+    <color name="lenslink_error">#B3261E</color>
 </resources>

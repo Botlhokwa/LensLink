@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="lenslink_screen_padding">24dp</dimen>
+    <dimen name="lenslink_field_corner_radius">12dp</dimen>
+    <dimen name="lenslink_button_corner_radius">28dp</dimen>
+    <dimen name="lenslink_button_height">56dp</dimen>
+    <dimen name="lenslink_field_spacing">16dp</dimen>
+    <dimen name="lenslink_label_spacing">6dp</dimen>
+    <dimen name="lenslink_button_icon_padding">10dp</dimen>
+</resources>
