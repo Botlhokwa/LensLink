@@ -4,16 +4,17 @@
     android:id="@+id/splashRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lenslink_cream"
+    android:background="@color/white"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/lenslink_screen_padding">
 
-    <!-- Text wordmark until the team supplies the approved logo asset -->
-    <include
-        layout="@layout/view_auth_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:contentDescription="Barred Productionz Studios"
+        android:scaleType="fitCenter"
+        android:src="@drawable/barred_logo" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressIndicator"

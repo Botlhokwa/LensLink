@@ -48,6 +48,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".ui.dashboard.DashboardActivity" android:exported="false" />
+        <activity android:name=".ui.client.BookSessionActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.photographer.PhotographerBookingsActivity" android:exported="false" />
         <activity android:name=".OfferingsActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
 

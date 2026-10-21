@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -25,12 +26,17 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /** Photographer-only booking browser. It scopes records to this user's owned package IDs. */
 public final class PhotographerBookingsActivity extends AppCompatActivity {
     private AuthRepository auth;
     private LinearLayout list;
     private TextView status;
+    private String photographerUid;
+    private final Set<String> ownedPackageIds = new HashSet<>();
+    private final Map<String, String> ownedPackageNames = new LinkedHashMap<>();
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +74,8 @@ public final class PhotographerBookingsActivity extends AppCompatActivity {
                     AppNavigator.goToClientHome(PhotographerBookingsActivity.this);
                     return;
                 }
-                loadBookings(user.getUserId());
+                photographerUid = user.getUserId();
+                loadBookings(photographerUid);
             }
             @Override public void onProfileMissing() {
                 if (!isFinishing() && !isDestroyed()) AppNavigator.goToCompleteProfile(PhotographerBookingsActivity.this);
@@ -85,6 +92,17 @@ public final class PhotographerBookingsActivity extends AppCompatActivity {
                     if (isFinishing() || isDestroyed()) return;
                     List<String> ids = new ArrayList<>();
                     for (DocumentSnapshot document : packages.getDocuments()) ids.add(document.getId());
+                    ownedPackageIds.clear();
+                    ownedPackageIds.addAll(ids);
+                    ownedPackageNames.clear();
+                    for (DocumentSnapshot packageDocument : packages.getDocuments()) {
+                        String name = packageDocument.getString("name");
+                        String category = packageDocument.getString("category");
+                        if (name != null && category != null && !category.trim().isEmpty()) {
+                            name = category + " · " + name;
+                        }
+                        if (name != null) ownedPackageNames.put(packageDocument.getId(), name);
+                    }
                     List<Task<QuerySnapshot>> queries = new ArrayList<>();
                     // Supports new booking documents that store the photographer UID directly.
                     queries.add(db.collection("Booking").whereEqualTo("photographerId", uid).get());
@@ -122,25 +140,94 @@ public final class PhotographerBookingsActivity extends AppCompatActivity {
             body.setOrientation(LinearLayout.VERTICAL);
             body.setPadding(dp(16), dp(12), dp(16), dp(12));
             card.addView(body);
-            body.addView(text("Booking " + document.getId(), 17, true));
+            body.addView(text("Booking request", 17, true));
             addField(body, "Status", document.getString("status"));
-            addField(body, "Package", document.getString("packageId"));
-            addField(body, "Client ID", document.getString("clientId"));
+            String packageId = document.getString("packageId");
+            String packageName = document.getString("packageName");
+            if (packageName == null && packageId != null) packageName = ownedPackageNames.get(packageId);
+            if (packageName == null) packageName = packageId == null ? "No package" : "Package name unavailable";
+            addField(body, "Package", packageName);
+            addField(body, "Services", displayNames(document.get("serviceNames"), document.get("serviceIds"), "No additional services"));
+            addField(body, "Add-ons", displayNames(document.get("addonNames"), document.get("addonIds"), "No add-ons"));
+            String clientName = document.getString("clientName");
+            addField(body, "Client", clientName == null || clientName.trim().isEmpty()
+                    ? "Name unavailable for this earlier booking" : clientName);
             addField(body, "Dates", stringList(document.get("bookedDates")));
             addField(body, "Time", document.getString("startTime"));
+            addField(body, "Until", document.getString("bufferEndTime"));
             addField(body, "Location", document.getString("location"));
             Object price = document.get("totalPrice");
             if (price != null) addField(body, "Total", "R " + price);
+            String bookingStatus = document.getString("status");
+            if (bookingStatus != null && "pending".equalsIgnoreCase(bookingStatus.trim())) {
+                LinearLayout actions = new LinearLayout(this);
+                actions.setOrientation(LinearLayout.HORIZONTAL);
+                MaterialButton accept = new MaterialButton(this);
+                accept.setText("Accept booking");
+                accept.setAllCaps(false);
+                MaterialButton reject = new MaterialButton(this);
+                reject.setText("Reject booking");
+                reject.setAllCaps(false);
+                accept.setOnClickListener(v -> updateBookingStatus(document, "confirmed", accept, reject));
+                reject.setOnClickListener(v -> updateBookingStatus(document, "rejected", accept, reject));
+                LinearLayout.LayoutParams acceptParams = new LinearLayout.LayoutParams(0, -2, 1f);
+                actions.addView(accept, acceptParams);
+                LinearLayout.LayoutParams rejectParams = new LinearLayout.LayoutParams(0, -2, 1f);
+                rejectParams.leftMargin = dp(8);
+                actions.addView(reject, rejectParams);
+                body.addView(actions);
+            }
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
             params.bottomMargin = dp(12);
             list.addView(card, params);
         }
     }
 
+    private void updateBookingStatus(DocumentSnapshot booking, String newStatus,
+                                     MaterialButton acceptButton, MaterialButton rejectButton) {
+        if (photographerUid == null) return;
+        String bookingPhotographerId = booking.getString("photographerId");
+        String packageId = booking.getString("packageId");
+        boolean belongsToPhotographer = photographerUid.equals(bookingPhotographerId)
+                || (packageId != null && ownedPackageIds.contains(packageId));
+        if (!belongsToPhotographer) {
+            status.setText("You can only update bookings for your own packages.");
+            return;
+        }
+        acceptButton.setEnabled(false);
+        rejectButton.setEnabled(false);
+        acceptButton.setText("Accept");
+        rejectButton.setText("Reject");
+        boolean accepting = "confirmed".equals(newStatus);
+        (accepting ? acceptButton : rejectButton).setText(accepting ? "Accepting…" : "Rejecting…");
+        FirebaseFirestore.getInstance().collection("Booking").document(booking.getId())
+                .update("status", newStatus, "statusUpdatedAt", FieldValue.serverTimestamp())
+                .addOnSuccessListener(unused -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    status.setText("Booking " + (accepting ? "accepted." : "rejected."));
+                    loadBookings(photographerUid);
+                })
+                .addOnFailureListener(error -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    acceptButton.setEnabled(true);
+                    rejectButton.setEnabled(true);
+                    acceptButton.setText("Accept booking");
+                    rejectButton.setText("Reject booking");
+                    status.setText("Could not update booking: "
+                            + (error.getLocalizedMessage() == null ? "Please try again." : error.getLocalizedMessage()));
+                });
+    }
+
     private void addField(LinearLayout parent, String label, String value) {
         if (value != null && !value.trim().isEmpty()) parent.addView(text(label + ": " + value, 14, false));
     }
 
+    private String displayNames(Object namesValue, Object idsValue, String emptyMessage) {
+        String names = stringList(namesValue);
+        if (!names.isEmpty()) return names;
+        String ids = stringList(idsValue);
+        return ids.isEmpty() ? emptyMessage : "Names unavailable for this earlier booking";
+    }
     private String stringList(Object value) {
         if (!(value instanceof List<?>)) return value == null ? "" : String.valueOf(value);
         List<?> items = (List<?>) value;

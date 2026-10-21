@@ -9,10 +9,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.lenslink.OfferingsActivity;
 import com.example.lenslink.R;
+import com.example.lenslink.ui.client.BookSessionActivity;
 import com.example.lenslink.model.Role;
 import com.example.lenslink.model.User;
 import com.example.lenslink.navigation.AppNavigator;
@@ -21,6 +25,9 @@ import com.example.lenslink.ui.photographer.PhotographerBookingsActivity;
 import com.example.lenslink.util.UiUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 /** Role-aware home screen. Booking navigation is offered to photographers only. */
 public final class DashboardActivity extends AppCompatActivity {
@@ -28,6 +35,10 @@ public final class DashboardActivity extends AppCompatActivity {
     private LinearLayout content;
     private String role;
     private String fullName;
+    private String userId;
+    private LinearLayout bookingUpdates;
+    private ListenerRegistration bookingUpdatesListener;
+    private final Map<String, String> seenBookingStatuses = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +72,7 @@ public final class DashboardActivity extends AppCompatActivity {
                 }
                 role = user.getRole();
                 fullName = user.getFullName();
+                userId = user.getUserId();
                 renderDashboard();
             }
             @Override public void onProfileMissing() {
@@ -88,9 +100,14 @@ public final class DashboardActivity extends AppCompatActivity {
         content.addView(label("QUICK ACTIONS", 13, true, null));
 
         if (Role.CLIENT.equals(role)) {
+            addActionCard("Book a session", "Choose a package, services, date and time", "Book a session", v -> startActivity(new Intent(this, BookSessionActivity.class)));
             addActionCard("Browse services and packages", "Explore Barred Productions offerings", "Browse offerings", v -> openOfferings(false));
             addActionCard("Chat assistant", "Get help choosing a package", "Open chat", v -> unavailable("Chat is not connected in this project yet."));
-            content.addView(label("Your bookings are not shown in the client app.", 13, false, null));
+            content.addView(label("BOOKING UPDATES", 13, true, null));
+            bookingUpdates = new LinearLayout(this);
+            bookingUpdates.setOrientation(LinearLayout.VERTICAL);
+            content.addView(bookingUpdates);
+            listenForBookingUpdates();
         } else {
             addActionCard("Manage my offerings", "Update services, packages and add-ons", "Manage offerings", v -> openOfferings(true));
             addActionCard("Photographer bookings", "View bookings for your packages", "View bookings", v -> startActivity(new Intent(this, PhotographerBookingsActivity.class)));
@@ -102,6 +119,84 @@ public final class DashboardActivity extends AppCompatActivity {
         addAction("Log out", v -> logout());
     }
 
+    private void listenForBookingUpdates() {
+        if (!Role.CLIENT.equals(role) || userId == null || bookingUpdates == null
+                || bookingUpdatesListener != null) return;
+        bookingUpdatesListener = FirebaseFirestore.getInstance().collection("Booking")
+                .whereEqualTo("clientId", userId)
+                .addSnapshotListener((snapshot, error) -> {
+                    if (isFinishing() || isDestroyed() || bookingUpdates == null) return;
+                    if (error != null) {
+                        bookingUpdates.removeAllViews();
+                        bookingUpdates.addView(label("Could not load booking updates.", 14, false, null));
+                        return;
+                    }
+                    if (snapshot == null) return;
+                    bookingUpdates.removeAllViews();
+                    int updateCount = 0;
+                    for (DocumentSnapshot booking : snapshot.getDocuments()) {
+                        String currentStatus = booking.getString("status");
+                        String previousStatus = seenBookingStatuses.put(booking.getId(), currentStatus);
+                        if (previousStatus != null && currentStatus != null
+                                && !previousStatus.equalsIgnoreCase(currentStatus)
+                                && ("confirmed".equalsIgnoreCase(currentStatus)
+                                || "rejected".equalsIgnoreCase(currentStatus))) {
+                            String message = "Your booking request was "
+                                    + ("confirmed".equalsIgnoreCase(currentStatus) ? "accepted." : "rejected.");
+                            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                        }
+                        if (currentStatus == null || (!"confirmed".equalsIgnoreCase(currentStatus)
+                                && !"rejected".equalsIgnoreCase(currentStatus))) continue;
+                        updateCount++;
+                        String packageName = booking.getString("packageName");
+                        String decision = "confirmed".equalsIgnoreCase(currentStatus) ? "accepted" : "rejected";
+                        String message = packageName == null || packageName.trim().isEmpty()
+                                ? "Your booking request was " + decision + "."
+                                : "Your " + packageName + " request was " + decision + ".";
+                        String date = readableBookingDate(booking.get("bookedDates"));
+                        if (!date.isEmpty()) message += " Date: " + date + ".";
+                        MaterialCardView card = new MaterialCardView(this);
+                        card.setRadius(dp(14));
+                        card.setCardElevation(dp(1));
+                        card.setCardBackgroundColor(getColor(R.color.lenslink_card));
+                        TextView update = label(message, 14, false, null);
+                        update.setPadding(dp(14), dp(10), dp(14), dp(10));
+                        card.addView(update);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
+                        params.topMargin = dp(6);
+                        bookingUpdates.addView(card, params);
+                    }
+                    if (updateCount == 0) {
+                        bookingUpdates.addView(label("Accepted or rejected booking requests will appear here.", 14, false, null));
+                    }
+                });
+    }
+
+    private String readableBookingDate(Object value) {
+        if (!(value instanceof java.util.List<?>)) return "";
+        StringBuilder result = new StringBuilder();
+        for (Object date : (java.util.List<?>) value) {
+            if (date == null) continue;
+            if (result.length() > 0) result.append(", ");
+            result.append(date);
+        }
+        return result.toString();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        listenForBookingUpdates();
+    }
+
+    @Override
+    protected void onStop() {
+        if (bookingUpdatesListener != null) {
+            bookingUpdatesListener.remove();
+            bookingUpdatesListener = null;
+        }
+        super.onStop();
+    }
     private void addActionCard(String title, String detail, String buttonText, View.OnClickListener listener) {
         MaterialCardView card = new MaterialCardView(this);
         card.setRadius(dp(18));
