@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="lenslink_charcoal">#252525</color>
-    <color name="lenslink_cream">#F0E6DD</color>
-    <color name="lenslink_grey">#D8D8D8</color>
-    <color name="lenslink_champagne">#ECDCCF</color>
-    <color name="lenslink_white">#FFFFFF</color>
-    <color name="lenslink_text_secondary">#5E5E5E</color>
-    <color name="lenslink_error">#B3261E</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="lenslink_ink">#241F1D</color>
+    <color name="lenslink_cream">#F5EEE7</color>
     <color name="lenslink_card">#FFFCF8</color>
     <color name="lenslink_text">#342D29</color>
     <color name="lenslink_muted">#81756D</color>
     <color name="lenslink_border">#E8DDD2</color>
     <color name="lenslink_soft">#EDE4DC</color>
     <color name="lenslink_accent">#B3916E</color>
+    <color name="lenslink_charcoal">#252525</color>
+    <color name="lenslink_grey">#D8D8D8</color>
+    <color name="lenslink_champagne">#ECDCCF</color>
+    <color name="lenslink_white">#FFFFFF</color>
+    <color name="lenslink_text_secondary">#5E5E5E</color>
+    <color name="lenslink_error">#B3261E</color>
 </resources>

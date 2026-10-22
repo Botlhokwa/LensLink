@@ -9,7 +9,7 @@ import com.example.lenslink.model.Role;
 import com.example.lenslink.ui.auth.CompleteProfileActivity;
 import com.example.lenslink.ui.auth.LoginActivity;
 import com.example.lenslink.ui.profile.ProfileActivity;
-import com.example.lenslink.ui.temp.TempHomeActivity;
+import com.example.lenslink.ui.dashboard.DashboardActivity;
 
 public final class AppNavigator {
 
@@ -29,13 +29,11 @@ public final class AppNavigator {
     }
 
     public static void goToClientHome(Context context) {
-        // TODO(teammates): replace with the client home screen
-        startAsNewRoot(context, TempHomeActivity.class);
+        startAsNewRoot(context, DashboardActivity.class);
     }
 
     public static void goToPhotographerHome(Context context) {
-        // TODO(teammates): replace with the photographer home screen
-        startAsNewRoot(context, TempHomeActivity.class);
+        startAsNewRoot(context, DashboardActivity.class);
     }
 
     public static void goToLogin(Context context) {
