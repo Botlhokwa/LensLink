@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -40,8 +41,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /** Client catalogue and photographer's own offering manager backed by Cloud Firestore. */
 public class OfferingsActivity extends AppCompatActivity {
@@ -61,6 +66,7 @@ public class OfferingsActivity extends AppCompatActivity {
     private EditText photographerIdInput;
     private LinearLayout root;
     private LinearLayout offeringList;
+    private LinearLayout packageCategoryRow;
     private TextView statusText;
     private MaterialButton manageButton;
     private MaterialButton browseButton;
@@ -68,6 +74,10 @@ public class OfferingsActivity extends AppCompatActivity {
     private MaterialButton loadButton;
     private MaterialButton importCatalogButton;
     private TextView ownershipNote;
+    private String selectedCatalogCategory = "All";
+    private final Map<String, String> addonNamesById = new HashMap<>();
+    private boolean addonNamesLoaded;
+    private boolean addonNamesLoading;
     private final List<MaterialButton> typeButtons = new ArrayList<>();
 
     private final ServiceRepository serviceRepository = new ServiceRepository();
@@ -157,10 +167,17 @@ public class OfferingsActivity extends AppCompatActivity {
             typeRow.addView(tab, weightedParams());
             tab.setOnClickListener(view -> {
                 selectedType = type;
+                selectedCatalogCategory = "All";
                 refreshScreen();
             });
         }
         root.addView(typeRow);
+
+        HorizontalScrollView packageCategoryScroller = new HorizontalScrollView(this);
+        packageCategoryScroller.setHorizontalScrollBarEnabled(false);
+        packageCategoryRow = row();
+        packageCategoryScroller.addView(packageCategoryRow);
+        root.addView(packageCategoryScroller);
 
         photographerIdInput = new EditText(this);
         photographerIdInput.setSingleLine(true);
@@ -200,6 +217,8 @@ public class OfferingsActivity extends AppCompatActivity {
         for (int i = 0; i < typeButtons.size(); i++) {
             styleToggleButton(typeButtons.get(i), i == selectedType);
         }
+        packageCategoryRow.setVisibility((selectedType == PACKAGES || selectedType == ADDONS) && !managementMode
+                ? View.VISIBLE : View.GONE);
         photographerIdInput.setVisibility(managementMode ? View.VISIBLE : View.GONE);
         ownershipNote.setVisibility(managementMode ? View.VISIBLE : View.GONE);
         loadButton.setVisibility(managementMode ? View.VISIBLE : View.GONE);
@@ -210,6 +229,7 @@ public class OfferingsActivity extends AppCompatActivity {
             activeListener = null;
         }
         offeringList.removeAllViews();
+        packageCategoryRow.removeAllViews();
         if (!profileLoaded) {
             statusText.setText("Checking account access…");
             return;
@@ -218,6 +238,9 @@ public class OfferingsActivity extends AppCompatActivity {
         if (managementMode && photographerId.isEmpty()) {
             statusText.setText("Could not find your signed-in Firebase UID. Log out and back in.");
             return;
+        }
+        if (managementMode && selectedType == PACKAGES && !addonNamesLoaded && !addonNamesLoading) {
+            loadAddonNames();
         }
         BaseOfferingRepository<?> repository = repositoryForType();
         activeListener = managementMode
@@ -239,9 +262,41 @@ public class OfferingsActivity extends AppCompatActivity {
                 return;
             }
             statusText.setText(managementMode ? "Your " + typeName().toLowerCase(Locale.ROOT) : "Available " + typeName().toLowerCase(Locale.ROOT));
+        if ((selectedType == PACKAGES || selectedType == ADDONS) && !managementMode) {
+            Set<String> categories = new LinkedHashSet<>();
+            categories.add("All");
+            for (DocumentSnapshot document : snapshot.getDocuments()) {
+                String category = document.getString("category");
+                if (category != null && !category.trim().isEmpty()) categories.add(category.trim());
+            }
+            if (!categories.contains(selectedCatalogCategory)) selectedCatalogCategory = "All";
+            for (String category : categories) {
+                MaterialButton filter = button(category);
+                filter.setTextSize(12);
+                filter.setCornerRadius(dp(20));
+                boolean selected = category.equals(selectedCatalogCategory);
+                filter.setBackgroundTintList(ColorStateList.valueOf(getColor(
+                        selected ? R.color.lenslink_accent : R.color.lenslink_card)));
+                filter.setTextColor(getColor(selected ? R.color.white : R.color.lenslink_text));
+                filter.setStrokeColor(ColorStateList.valueOf(getColor(R.color.lenslink_border)));
+                filter.setStrokeWidth(selected ? 0 : dp(1));
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT, dp(38));
+                params.setMargins(0, dp(4), dp(8), dp(8));
+                packageCategoryRow.addView(filter, params);
+                filter.setOnClickListener(view -> {
+                    selectedCatalogCategory = category;
+                    showSnapshot(repository, snapshot, null);
+                });
+            }
+        }
             for (DocumentSnapshot document : snapshot.getDocuments()) {
                 Object offering = repository.decode(document);
-                if (offering != null) offeringList.addView(offeringCard(offering));
+            if (offering == null) continue;
+            if ((selectedType == PACKAGES || selectedType == ADDONS) && !managementMode
+                    && !"All".equals(selectedCatalogCategory)
+                    && !selectedCatalogCategory.equalsIgnoreCase(categoryOf(offering))) continue;
+            offeringList.addView(offeringCard(offering));
             }
         });
     }
@@ -277,9 +332,17 @@ public class OfferingsActivity extends AppCompatActivity {
         if (!inclusions.isEmpty()) content.addView(text("Includes: " + String.join(", ", inclusions), 14, false));
         List<String> addonIds = addonIdsOf(offering);
         if (!addonIds.isEmpty()) {
-            content.addView(text(managementMode
-                    ? "Add-on IDs: " + String.join(", ", addonIds)
-                    : "Optional add-ons are listed in the Add-ons tab.", 13, false));
+            if (managementMode) {
+                List<String> addonNames = new ArrayList<>();
+                for (String addonId : addonIds) {
+                    String addonName = addonNamesById.get(addonId);
+                    addonNames.add(addonName == null || addonName.trim().isEmpty()
+                            ? readableAddonId(addonId) : addonName);
+                }
+                content.addView(text("Add-ons: " + String.join(", ", addonNames), 13, false));
+            } else {
+                content.addView(text("Optional add-ons are listed in the Add-ons tab.", 13, false));
+            }
         }
         if (offering instanceof ServiceOffering) {
             long duration = ((ServiceOffering) offering).getDurationMinutes();
@@ -303,6 +366,45 @@ public class OfferingsActivity extends AppCompatActivity {
         cardParams.bottomMargin = dp(12);
         card.setLayoutParams(cardParams);
         return card;
+    }
+
+    private void loadAddonNames() {
+        addonNamesLoading = true;
+        com.google.firebase.firestore.FirebaseFirestore.getInstance().collection("addons")
+                .whereEqualTo("photographerId", currentUid).get()
+                .addOnSuccessListener(snapshot -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    addonNamesById.clear();
+                    for (DocumentSnapshot document : snapshot.getDocuments()) {
+                        String name = document.getString("name");
+                        if (name != null && !name.trim().isEmpty()) addonNamesById.put(document.getId(), name.trim());
+                    }
+                    addonNamesLoading = false;
+                    addonNamesLoaded = true;
+                    if (managementMode && selectedType == PACKAGES) refreshScreen();
+                })
+                .addOnFailureListener(error -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    addonNamesLoading = false;
+                    addonNamesLoaded = true;
+                    if (managementMode && selectedType == PACKAGES) refreshScreen();
+                });
+    }
+
+    private String readableAddonId(String id) {
+        if (id == null || id.trim().isEmpty()) return "Add-on";
+        String readable = id.trim();
+        if (currentUid != null && readable.startsWith(currentUid + "_"))
+            readable = readable.substring(currentUid.length() + 1);
+        readable = readable.replace('_', ' ').replace('-', ' ').toLowerCase(Locale.ROOT);
+        StringBuilder titleCase = new StringBuilder();
+        boolean capitalize = true;
+        for (int i = 0; i < readable.length(); i++) {
+            char character = readable.charAt(i);
+            titleCase.append(capitalize ? Character.toUpperCase(character) : character);
+            capitalize = Character.isWhitespace(character);
+        }
+        return titleCase.toString();
     }
 
     private void openEditor(Object existing) {

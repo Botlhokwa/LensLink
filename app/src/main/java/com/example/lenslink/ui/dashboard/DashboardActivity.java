@@ -1,9 +1,14 @@
 package com.example.lenslink.ui.dashboard;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -93,30 +98,143 @@ public final class DashboardActivity extends AppCompatActivity {
         content.removeAllViews();
         TextView logo = label("LensLink", 30, true, Typeface.SERIF);
         content.addView(logo);
-        TextView welcome = label("Welcome, " + safe(fullName), 22, true, null);
+        TextView welcome = label(Role.CLIENT.equals(role) ? "Hi, " + safe(fullName) + " 👋"
+                : "Welcome, " + safe(fullName), 22, true, null);
         welcome.setPadding(0, dp(8), 0, dp(2));
         content.addView(welcome);
-        content.addView(label(Role.CLIENT.equals(role) ? "READY TO CAPTURE YOUR NEXT MOMENT?" : "YOUR PHOTOGRAPHY STUDIO", 12, true, null));
-        content.addView(label("QUICK ACTIONS", 13, true, null));
 
         if (Role.CLIENT.equals(role)) {
-            addActionCard("Book a session", "Choose a package, services, date and time", "Book a session", v -> startActivity(new Intent(this, BookSessionActivity.class)));
-            addActionCard("Browse services and packages", "Explore Barred Productions offerings", "Browse offerings", v -> openOfferings(false));
-            addActionCard("Chat assistant", "Get help choosing a package", "Open chat", v -> unavailable("Chat is not connected in this project yet."));
+            content.addView(label("How can I help you today?", 15, false, null));
+            addChatAssistantCard();
+            content.addView(label("QUICK ACTIONS", 13, true, null));
+            LinearLayout actions = new LinearLayout(this);
+            actions.setOrientation(LinearLayout.HORIZONTAL);
+            actions.addView(addDashboardActionTile("Book a session", "Choose package and time",
+                    R.drawable.icon_book_source,
+                    v -> startActivity(new Intent(this, BookSessionActivity.class))), weightedParams());
+            actions.addView(addDashboardActionTile("Browse offerings", "Packages, services and extras",
+                    R.drawable.icon_list_source, v -> openOfferings(false)), weightedParams());
+            content.addView(actions);
             content.addView(label("BOOKING UPDATES", 13, true, null));
             bookingUpdates = new LinearLayout(this);
             bookingUpdates.setOrientation(LinearLayout.VERTICAL);
             content.addView(bookingUpdates);
             listenForBookingUpdates();
         } else {
-            addActionCard("Manage my offerings", "Update services, packages and add-ons", "Manage offerings", v -> openOfferings(true));
-            addActionCard("Photographer bookings", "View bookings for your packages", "View bookings", v -> startActivity(new Intent(this, PhotographerBookingsActivity.class)));
-            addActionCard("Browse offerings", "See the client catalogue", "Browse", v -> openOfferings(false));
+            content.addView(label("YOUR PHOTOGRAPHY STUDIO", 12, true, null));
+            content.addView(label("Manage your studio and respond to session requests.", 14, false, null));
+            addChatAssistantCard();
+            content.addView(label("QUICK ACTIONS", 13, true, null));
+            LinearLayout firstActions = new LinearLayout(this);
+            firstActions.setOrientation(LinearLayout.HORIZONTAL);
+            firstActions.addView(addDashboardActionTile("Manage offerings", "Packages, services and extras",
+                    R.drawable.icon_list_source, v -> openOfferings(true)), weightedParams());
+            firstActions.addView(addDashboardActionTile("Photographer bookings", "Review and respond",
+                    R.drawable.icon_book_source,
+                    v -> startActivity(new Intent(this, PhotographerBookingsActivity.class))), weightedParams());
+            content.addView(firstActions);
+            LinearLayout secondActions = new LinearLayout(this);
+            secondActions.setOrientation(LinearLayout.HORIZONTAL);
+            secondActions.addView(addDashboardActionTile("Browse offerings", "View the client catalogue",
+                    R.drawable.icon_list_source, v -> openOfferings(false)), weightedParams());
+            secondActions.addView(new View(this), weightedParams());
+            content.addView(secondActions);
         }
 
         content.addView(label("ACCOUNT", 13, true, null));
         addAction("My profile", v -> AppNavigator.goToProfile(this));
         addAction("Log out", v -> logout());
+    }
+
+    private void addChatAssistantCard() {
+        MaterialCardView card = new MaterialCardView(this);
+        card.setRadius(dp(18));
+        card.setCardElevation(dp(2));
+        card.setCardBackgroundColor(getColor(R.color.lenslink_soft));
+        LinearLayout inside = new LinearLayout(this);
+        inside.setOrientation(LinearLayout.HORIZONTAL);
+        inside.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        inside.setPadding(dp(14), dp(10), dp(14), dp(10));
+        inside.addView(themedIcon(R.drawable.icon_chatbot_source, true),
+                new LinearLayout.LayoutParams(dp(62), dp(62)));
+        LinearLayout copy = new LinearLayout(this);
+        copy.setOrientation(LinearLayout.VERTICAL);
+        copy.setPadding(dp(12), 0, 0, 0);
+        copy.addView(label("Chat assistant", 17, true, null));
+        copy.addView(label("Ask about packages, availability and bookings.", 13, false, null));
+        inside.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
+        card.addView(inside);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
+        params.topMargin = dp(12);
+        params.bottomMargin = dp(14);
+        content.addView(card, params);
+        card.setOnClickListener(v -> unavailable("Chat assistant is not connected in this project yet."));
+    }
+
+    private MaterialCardView addDashboardActionTile(String title, String detail, int iconResource,
+                                                     View.OnClickListener listener) {
+        MaterialCardView card = new MaterialCardView(this);
+        card.setRadius(dp(16));
+        card.setCardElevation(dp(2));
+        card.setCardBackgroundColor(getColor(R.color.lenslink_card));
+        card.setStrokeWidth(dp(1));
+        card.setStrokeColor(getColor(R.color.lenslink_border));
+        LinearLayout inside = new LinearLayout(this);
+        inside.setOrientation(LinearLayout.VERTICAL);
+        inside.setPadding(dp(12), dp(12), dp(10), dp(12));
+        inside.addView(themedIcon(iconResource, false), new LinearLayout.LayoutParams(dp(42), dp(42)));
+        TextView heading = label(title, 15, true, null);
+        heading.setPadding(0, dp(8), 0, dp(2));
+        inside.addView(heading);
+        inside.addView(label(detail, 12, false, null));
+        card.addView(inside);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, dp(164), 1);
+        params.setMargins(0, dp(4), dp(8), dp(10));
+        card.setLayoutParams(params);
+        card.setOnClickListener(listener);
+        return card;
+    }
+
+    /** Converts the supplied white-background art into theme-colored icons with transparent backgrounds. */
+    private ImageView themedIcon(int resourceId, boolean chatIcon) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+        Bitmap source = BitmapFactory.decodeResource(getResources(), resourceId, options);
+        ImageView view = new ImageView(this);
+        if (source == null) return view;
+        Bitmap icon = source.copy(Bitmap.Config.ARGB_8888, true);
+        source.recycle();
+        int[] pixels = new int[icon.getWidth() * icon.getHeight()];
+        icon.getPixels(pixels, 0, icon.getWidth(), 0, 0, icon.getWidth(), icon.getHeight());
+        int ink = getColor(R.color.lenslink_text);
+        int accent = getColor(R.color.lenslink_accent);
+        for (int i = 0; i < pixels.length; i++) {
+            int pixel = pixels[i];
+            int red = Color.red(pixel), green = Color.green(pixel), blue = Color.blue(pixel);
+            int alpha = Color.alpha(pixel);
+            int minimum = Math.min(red, Math.min(green, blue));
+            if (red > 242 && green > 242 && blue > 242) alpha = 0;
+            else if (red > 215 && green > 215 && blue > 215)
+                alpha = Math.max(0, 255 - (minimum - 215) * 9);
+            boolean cyan = chatIcon && red < 90 && green > 130 && blue > 130;
+            pixels[i] = (alpha << 24) | ((cyan ? accent : ink) & 0x00FFFFFF);
+        }
+        icon.setPixels(pixels, 0, icon.getWidth(), 0, 0, icon.getWidth(), icon.getHeight());
+        view.setImageBitmap(icon);
+        view.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        GradientDrawable background = new GradientDrawable();
+        background.setShape(GradientDrawable.OVAL);
+        background.setColor(getColor(R.color.lenslink_cream));
+        view.setBackground(background);
+        view.setPadding(dp(7), dp(7), dp(7), dp(7));
+        view.setContentDescription(chatIcon ? "Chat assistant icon" : "Dashboard action icon");
+        return view;
+    }
+
+    private LinearLayout.LayoutParams weightedParams() {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, dp(164), 1);
+        params.setMargins(0, 0, dp(4), 0);
+        return params;
     }
 
     private void listenForBookingUpdates() {
@@ -197,25 +315,6 @@ public final class DashboardActivity extends AppCompatActivity {
         }
         super.onStop();
     }
-    private void addActionCard(String title, String detail, String buttonText, View.OnClickListener listener) {
-        MaterialCardView card = new MaterialCardView(this);
-        card.setRadius(dp(18));
-        card.setCardElevation(dp(2));
-        card.setCardBackgroundColor(getColor(R.color.lenslink_card));
-        LinearLayout inside = new LinearLayout(this);
-        inside.setOrientation(LinearLayout.VERTICAL);
-        inside.setPadding(dp(18), dp(14), dp(18), dp(14));
-        inside.addView(label(title, 18, true, null));
-        inside.addView(label(detail, 14, false, null));
-        MaterialButton button = action(buttonText, listener);
-        inside.addView(button);
-        card.addView(inside);
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(-1, -2);
-        p.topMargin = dp(10);
-        p.bottomMargin = dp(8);
-        content.addView(card, p);
-    }
-
     private void addAction(String text, View.OnClickListener listener) {
         MaterialButton button = action(text, listener);
         content.addView(button);

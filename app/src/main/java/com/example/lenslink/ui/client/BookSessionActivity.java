@@ -6,6 +6,7 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -40,6 +41,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -56,7 +59,11 @@ public final class BookSessionActivity extends AppCompatActivity {
     private LinearLayout root;
     private LinearLayout serviceChoices;
     private LinearLayout addonChoices;
-    private RadioGroup packageGroup;
+    private LinearLayout packageChoices;
+    private LinearLayout packageCategories;
+    private String selectedPackageCategory = "All";
+    private LinearLayout addonCategories;
+    private String selectedAddonCategory = "All";
     private TextView status;
     private TextView total;
     private TextView dateLabel;
@@ -118,9 +125,15 @@ public final class BookSessionActivity extends AppCompatActivity {
     private void buildForm() {
         root.removeViews(1, root.getChildCount() - 1);
         addSection("Packages");
-        packageGroup = new RadioGroup(this);
-        packageGroup.setOrientation(RadioGroup.VERTICAL);
-        root.addView(packageGroup);
+        HorizontalScrollView categoryScroller = new HorizontalScrollView(this);
+        categoryScroller.setHorizontalScrollBarEnabled(false);
+        packageCategories = new LinearLayout(this);
+        packageCategories.setOrientation(LinearLayout.HORIZONTAL);
+        categoryScroller.addView(packageCategories);
+        root.addView(categoryScroller);
+        packageChoices = new LinearLayout(this);
+        packageChoices.setOrientation(LinearLayout.VERTICAL);
+        root.addView(packageChoices);
 
         addSection("Additional services");
         serviceChoices = new LinearLayout(this);
@@ -128,6 +141,12 @@ public final class BookSessionActivity extends AppCompatActivity {
         root.addView(serviceChoices);
 
         addSection("Optional add-ons");
+        HorizontalScrollView addonCategoryScroller = new HorizontalScrollView(this);
+        addonCategoryScroller.setHorizontalScrollBarEnabled(false);
+        addonCategories = new LinearLayout(this);
+        addonCategories.setOrientation(LinearLayout.HORIZONTAL);
+        addonCategoryScroller.addView(addonCategories);
+        root.addView(addonCategoryScroller);
         addonChoices = new LinearLayout(this);
         addonChoices.setOrientation(LinearLayout.VERTICAL);
         root.addView(addonChoices);
@@ -202,35 +221,13 @@ public final class BookSessionActivity extends AppCompatActivity {
     private void renderChoices() {
         serviceChoices.removeAllViews();
         addonChoices.removeAllViews();
-        packageGroup.setOnCheckedChangeListener(null);
-        packageGroup.removeAllViews();
-
-        RadioButton noPackage = new RadioButton(this);
-        noPackage.setText("No package — I'll choose services");
-        noPackage.setId(View.generateViewId());
-        noPackage.setChecked(selectedPackage == null);
-        packageGroup.addView(noPackage);
-        packageGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == noPackage.getId()) {
-                selectedPackage = null;
-                updateOwnerFromServices();
-                renderChoices();
-            }
-        });
-
+        addonCategories.removeAllViews();
         List<PackageOffering> visiblePackages = new ArrayList<>();
         for (PackageOffering item : packages) {
             if (!hasOwner(item.getPhotographerId())) continue;
             if (photographerId == null || photographerId.equals(item.getPhotographerId())) visiblePackages.add(item);
         }
-        for (PackageOffering item : visiblePackages) {
-            RadioButton choice = new RadioButton(this);
-            choice.setId(View.generateViewId());
-            choice.setText(packageDisplayName(item) + "  ·  " + money(item.getPrice()));
-            if (selectedPackage != null && selectedPackage.getId().equals(item.getId())) choice.setChecked(true);
-            packageGroup.addView(choice);
-            choice.setOnClickListener(v -> choosePackage(item));
-        }
+        renderPackageChoices(visiblePackages);
 
         boolean hasService = false;
         for (ServiceOffering item : services) {
@@ -256,25 +253,172 @@ public final class BookSessionActivity extends AppCompatActivity {
         }
         if (!hasService) serviceChoices.addView(text("No additional services are available from this photographer.", 13, false));
 
-        boolean hasAddon = false;
+        List<AddonOffering> visibleAddons = new ArrayList<>();
         for (AddonOffering item : addons) {
             if (!hasOwner(item.getPhotographerId())) continue;
             if (photographerId == null || !photographerId.equals(item.getPhotographerId())) continue;
-            hasAddon = true;
+            visibleAddons.add(item);
+        }
+        if (visibleAddons.isEmpty()) addonChoices.addView(text(photographerId == null
+                ? "Choose a package or service first to see that photographer's add-ons."
+                : "No add-ons are available for this photographer.", 13, false));
+        else renderAddonChoices(visibleAddons);
+        updateTotal();
+    }
+
+    private void renderAddonChoices(List<AddonOffering> visibleAddons) {
+        addonCategories.removeAllViews();
+        Map<String, Boolean> categories = new LinkedHashMap<>();
+        categories.put("All", true);
+        for (AddonOffering item : visibleAddons) {
+            String category = item.getCategory();
+            if (category != null && !category.trim().isEmpty()) categories.put(category.trim(), true);
+        }
+        if (!categories.containsKey(selectedAddonCategory)) selectedAddonCategory = "All";
+        for (String category : categories.keySet()) {
+            MaterialButton chip = new MaterialButton(this);
+            chip.setText(category);
+            chip.setAllCaps(false);
+            chip.setTextSize(12);
+            chip.setMinHeight(dp(38));
+            chip.setMinimumHeight(dp(38));
+            chip.setInsetTop(0);
+            chip.setInsetBottom(0);
+            chip.setPadding(dp(12), 0, dp(12), 0);
+            chip.setCornerRadius(dp(20));
+            boolean selected = category.equals(selectedAddonCategory);
+            chip.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(
+                    selected ? R.color.lenslink_accent : R.color.lenslink_card)));
+            chip.setTextColor(getColor(selected ? R.color.white : R.color.lenslink_text));
+            chip.setStrokeColor(android.content.res.ColorStateList.valueOf(getColor(R.color.lenslink_border)));
+            chip.setStrokeWidth(selected ? 0 : dp(1));
+            chip.setOnClickListener(v -> {
+                selectedAddonCategory = category;
+                renderChoices();
+            });
+            LinearLayout.LayoutParams chipParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, dp(38));
+            chipParams.setMargins(0, dp(4), dp(8), dp(8));
+            addonCategories.addView(chip, chipParams);
+        }
+
+        for (AddonOffering item : visibleAddons) {
+            String category = item.getCategory() == null ? "" : item.getCategory().trim();
+            if (!"All".equals(selectedAddonCategory)
+                    && !selectedAddonCategory.equalsIgnoreCase(category)) continue;
+            MaterialCardView card = new MaterialCardView(this);
+            card.setRadius(dp(14));
+            card.setCardElevation(dp(2));
+            card.setCardBackgroundColor(getColor(R.color.lenslink_card));
+            card.setStrokeWidth(dp(1));
+            card.setStrokeColor(getColor(R.color.lenslink_border));
+            LinearLayout details = new LinearLayout(this);
+            details.setOrientation(LinearLayout.VERTICAL);
+            details.setPadding(dp(14), dp(10), dp(14), dp(8));
+            card.addView(details);
+            if (!category.isEmpty()) details.addView(text(category, 12, false));
+            details.addView(text(item.getName() + "  ·  " + money(item.getPrice()), 16, true));
+            if (item.getDescription() != null && !item.getDescription().trim().isEmpty())
+                details.addView(text(item.getDescription(), 13, false));
             CheckBox choice = new CheckBox(this);
-            choice.setText(item.getName() + "  ·  " + money(item.getPrice()));
+            choice.setText("Add to booking");
             choice.setChecked(selectedAddonIds.contains(item.getId()));
-            addonChoices.addView(choice);
-            addDescription(addonChoices, item.getDescription());
+            details.addView(choice);
             choice.setOnCheckedChangeListener((button, checked) -> {
                 if (checked) selectedAddonIds.add(item.getId()); else selectedAddonIds.remove(item.getId());
                 updateTotal();
             });
+            LinearLayout.LayoutParams cardParams = matchWrap();
+            cardParams.setMargins(0, dp(4), 0, dp(10));
+            addonChoices.addView(card, cardParams);
         }
-        if (!hasAddon) addonChoices.addView(text(photographerId == null
-                ? "Choose a package or service first to see that photographer's add-ons."
-                : "No add-ons are available for this photographer.", 13, false));
-        updateTotal();
+    }
+
+    /** Shows category filters and selectable package cards in the client booking flow. */
+    private void renderPackageChoices(List<PackageOffering> visiblePackages) {
+        packageCategories.removeAllViews();
+        packageChoices.removeAllViews();
+
+        Map<String, Boolean> categories = new LinkedHashMap<>();
+        categories.put("All", true);
+        for (PackageOffering item : visiblePackages) {
+            String category = item.getCategory();
+            if (category != null && !category.trim().isEmpty()) categories.put(category.trim(), true);
+        }
+        if (!categories.containsKey(selectedPackageCategory)) selectedPackageCategory = "All";
+        for (String category : categories.keySet()) {
+            MaterialButton chip = new MaterialButton(this);
+            chip.setText(category);
+            chip.setAllCaps(false);
+            chip.setTextSize(12);
+            chip.setMinHeight(dp(38));
+            chip.setMinimumHeight(dp(38));
+            chip.setInsetTop(0);
+            chip.setInsetBottom(0);
+            chip.setPadding(dp(12), 0, dp(12), 0);
+            chip.setCornerRadius(dp(20));
+            boolean selected = category.equals(selectedPackageCategory);
+            chip.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(
+                    selected ? R.color.lenslink_accent : R.color.lenslink_card)));
+            chip.setTextColor(getColor(selected ? R.color.white : R.color.lenslink_text));
+            chip.setStrokeColor(android.content.res.ColorStateList.valueOf(getColor(R.color.lenslink_border)));
+            chip.setStrokeWidth(selected ? 0 : dp(1));
+            chip.setOnClickListener(v -> {
+                selectedPackageCategory = category;
+                renderChoices();
+            });
+            LinearLayout.LayoutParams chipParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, dp(38));
+            chipParams.setMargins(0, dp(4), dp(8), dp(8));
+            packageCategories.addView(chip, chipParams);
+        }
+
+        MaterialButton noPackage = button("Choose services without a package");
+        noPackage.setOnClickListener(v -> {
+            selectedPackage = null;
+            updateOwnerFromServices();
+            renderChoices();
+        });
+        packageChoices.addView(noPackage, matchWrap());
+
+        int shown = 0;
+        for (PackageOffering item : visiblePackages) {
+            String category = item.getCategory() == null ? "" : item.getCategory().trim();
+            if (!"All".equals(selectedPackageCategory)
+                    && !selectedPackageCategory.equalsIgnoreCase(category)) continue;
+            shown++;
+            MaterialCardView card = new MaterialCardView(this);
+            card.setRadius(dp(14));
+            card.setCardElevation(dp(2));
+            card.setCardBackgroundColor(getColor(R.color.lenslink_card));
+            card.setStrokeWidth(dp(1));
+            card.setStrokeColor(getColor(R.color.lenslink_border));
+            LinearLayout details = new LinearLayout(this);
+            details.setOrientation(LinearLayout.VERTICAL);
+            details.setPadding(dp(14), dp(12), dp(14), dp(10));
+            card.addView(details);
+            if (!category.isEmpty()) details.addView(text(category, 12, false));
+            details.addView(text(item.getName() == null ? "Photography package" : item.getName(), 17, true));
+            details.addView(text(money(item.getPrice()), 16, true));
+            if (item.getDescription() != null && !item.getDescription().trim().isEmpty())
+                details.addView(text(item.getDescription(), 13, false));
+            if (item.getInclusions() != null) {
+                for (String inclusion : item.getInclusions()) {
+                    if (inclusion != null && !inclusion.trim().isEmpty())
+                        details.addView(text("•  " + inclusion, 13, false));
+                }
+            }
+            MaterialButton select = button(selectedPackage != null && selectedPackage.getId().equals(item.getId())
+                    ? "Selected" : "Choose package");
+            details.addView(select, matchWrap());
+            View.OnClickListener choose = v -> choosePackage(item);
+            select.setOnClickListener(choose);
+            card.setOnClickListener(choose);
+            LinearLayout.LayoutParams cardParams = matchWrap();
+            cardParams.setMargins(0, dp(4), 0, dp(10));
+            packageChoices.addView(card, cardParams);
+        }
+        if (shown == 0) packageChoices.addView(text("No packages in this category.", 13, false));
     }
 
     private void choosePackage(PackageOffering item) {
@@ -329,7 +473,8 @@ public final class BookSessionActivity extends AppCompatActivity {
             if (raw instanceof List<?>) for (Object slot : (List<?>) raw) if (slot != null) booked.add(String.valueOf(slot));
             List<String> open = new ArrayList<>();
             if (!booked.contains("FULL_DAY")) {
-                for (String slot : Arrays.asList("09:00", "11:30", "14:00", "16:30")) {
+                for (String slot : Arrays.asList(
+                        "07:00", "09:00", "11:30", "14:00", "16:30", "19:00")) {
                     if (!booked.contains(slot)) open.add(slot);
                 }
             }
