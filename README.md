@@ -284,6 +284,12 @@ Seeded in memory for the mock phase:
 - **Bookings** for the demo client "Bee Lemme": a confirmed Golden Hour session on 24/10/2026, a pending Graduation Standard session on 17/10/2026, and a confirmed Wedding Shoot on 24/05/2026
 - **Photos:** sample images attached to two of the demo bookings so *Download All* can be tried before any upload
 
+
+https://github.com/user-attachments/assets/4912fb16-e146-467c-8dfa-cf7ffed57133
+
+
+
+
 ---
 
 ## Known limitations
