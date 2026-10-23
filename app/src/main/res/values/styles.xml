@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Buttons: dark pill (default), outlined pill, compact variants for cards -->
+    <style name="Widget.LensLink.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/primary_dark</item>
+        <item name="android:textColor">@color/surface_white</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+    <style name="Widget.LensLink.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="backgroundTint">@color/surface_white</item>
+        <item name="strokeColor">@color/primary_dark</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">52dp</item>
+    </style>
+    <style name="Widget.LensLink.Button.Small">
+        <item name="android:textSize">13sp</item>
+        <item name="android:minHeight">42dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="cornerRadius">21dp</item>
+    </style>
+    <style name="Widget.LensLink.Button.Outlined.Small">
+        <item name="android:textSize">13sp</item>
+        <item name="android:minHeight">42dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="cornerRadius">21dp</item>
+    </style>
+
+    <!-- Text -->
+    <style name="Text" parent="" />
+    <style name="Text.Label">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.06</item>
+    </style>
+    <style name="Text.ScreenTitle">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">serif</item>
+    </style>
+    <style name="Text.SectionTitle">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Text.Body">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+    <style name="Text.Muted">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Inputs -->
+    <style name="Input" parent="" />
+    <style name="Input.Pill">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">actionNext</item>
+    </style>
+</resources>

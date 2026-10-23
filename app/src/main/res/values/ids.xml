@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="navHome" type="id" />
+    <item name="navBookings" type="id" />
+    <item name="navChat" type="id" />
+    <item name="navPackages" type="id" />
+    <item name="navMessages" type="id" />
+    <item name="navProfile" type="id" />
+</resources>

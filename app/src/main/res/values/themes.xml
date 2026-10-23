@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Always light: the Figma design is a cream/dark-pill palette. A DayNight parent made every
+         default-coloured widget (calendar, spinners, chips) turn white-on-cream in system dark mode,
+         and MaterialButton ignored the dark pill backgrounds and used the default purple. -->
+    <style name="Theme.LensLink" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary_dark</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/surface_white</item>
+        <item name="colorSecondary">@color/primary_dark</item>
+        <item name="colorOnSecondary">@color/surface_white</item>
+        <item name="colorAccent">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/primary_dark</item>
+        <item name="colorControlActivated">@color/primary_dark</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="android:windowBackground">@color/bg_cream</item>
+        <item name="android:statusBarColor">@color/transparent</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
+        <item name="materialButtonStyle">@style/Widget.LensLink.Button</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.LensLink.Dialog</item>
+    </style>
+
+    <style name="ThemeOverlay.LensLink.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/primary_dark</item>
+        <item name="colorSurface">@color/surface_white</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.LensLink.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.LensLink.DialogButton</item>
+    </style>
+    <style name="Widget.LensLink.DialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/primary_dark</item>
+    </style>
+
+    <style name="ThemeOverlay.LensLink.Calendar" parent="">
+        <item name="colorAccent">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/primary_dark</item>
+        <item name="colorPrimary">@color/primary_dark</item>
+        <item name="android:colorPrimary">@color/primary_dark</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+    </style>
+</resources>
