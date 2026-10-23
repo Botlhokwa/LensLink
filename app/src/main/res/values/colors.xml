@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="lenslink_ink">#241F1D</color>
-    <color name="lenslink_cream">#F5EEE7</color>
-    <color name="lenslink_card">#FFFCF8</color>
-    <color name="lenslink_text">#342D29</color>
-    <color name="lenslink_muted">#81756D</color>
-    <color name="lenslink_border">#E8DDD2</color>
-    <color name="lenslink_soft">#EDE4DC</color>
-    <color name="lenslink_accent">#B3916E</color>
-    <color name="lenslink_charcoal">#252525</color>
-    <color name="lenslink_grey">#D8D8D8</color>
-    <color name="lenslink_champagne">#ECDCCF</color>
-    <color name="lenslink_white">#FFFFFF</color>
-    <color name="lenslink_text_secondary">#5E5E5E</color>
-    <color name="lenslink_error">#B3261E</color>
+    <color name="bg_cream">#F9F5F0</color>
+    <color name="surface_white">#FFFFFF</color>
+    <color name="surface_toggle">#EBE5DD</color>
+    <color name="primary_dark">#1C1C1E</color>
+    <color name="text_primary">#1C1C1E</color>
+    <color name="text_secondary">#7A7570</color>
+    <color name="status_confirmed">#2E7D32</color>
+    <color name="status_pending">#EF6C00</color>
+    <color name="status_cancelled">#B3261E</color>
+    <color name="status_completed">#37474F</color>
+    <color name="status_confirmed_bg">#E4F1E5</color>
+    <color name="status_pending_bg">#FCEBD6</color>
+    <color name="status_cancelled_bg">#F7E0DE</color>
+    <color name="status_completed_bg">#E3E8EB</color>
+    <color name="divider_color">#E5E0D8</color>
+    <color name="input_border">#EAE4DC</color>
+    <color name="slot_booked_text">#B5AFA8</color>
+    <color name="transparent">#00000000</color>
 </resources>

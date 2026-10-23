@@ -1,63 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Only needed to save downloads to Pictures on Android 9 and below -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     <application
-        android:name=".LensLinkApplication"
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="LensLink"
         android:supportsRtl="true"
         android:theme="@style/Theme.LensLink">
-
-        <!-- App entry point: checks the saved session and routes the user -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-        </activity>
-
-        <activity
-            android:name=".ui.auth.LoginActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".ui.auth.RegisterActivity"
-            android:exported="true"
-            android:windowSoftInputMode="adjustResize">
+        <activity android:name=".LoginActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.auth.ForgotPasswordActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".ui.auth.CompleteProfileActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".ui.profile.ProfileActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity android:name=".ui.dashboard.DashboardActivity" android:exported="false" />
-        <activity android:name=".ui.client.BookSessionActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".ui.photographer.PhotographerBookingsActivity" android:exported="false" />
-        <activity android:name=".OfferingsActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
-
-        <!-- TEMPORARY test screen: delete when real home screens exist -->
-        <activity
-            android:name=".ui.temp.TempHomeActivity"
-            android:exported="false" />
+        <!-- Role-specific screens are not launchable from outside the app; RoleGuard also checks the role on entry. -->
+        <activity android:name=".MainActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".PhotographerActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
     </application>
-
 </manifest>
